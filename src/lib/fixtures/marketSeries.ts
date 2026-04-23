@@ -48,6 +48,13 @@ export const marketFixtures = {
     weeklyDrift: 0.03,
     amplitude: 5.2
   }),
+  BRENT: generateWeeklySeries({
+    startDate: seedDate,
+    weeks: 190,
+    startValue: 83,
+    weeklyDrift: 0.025,
+    amplitude: 4.8
+  }),
   BTC: generateWeeklySeries({
     startDate: seedDate,
     weeks: 190,

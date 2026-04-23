@@ -21,6 +21,7 @@ function makeInput(): CoreWeeklySeries {
     SPX: makeSeries(4600, 10),
     DXY: makeSeries(103, -0.1),
     WTI: makeSeries(74, 0.2),
+    BRENT: makeSeries(79, 0.18),
     BTC: makeSeries(35000, 300)
   };
 }

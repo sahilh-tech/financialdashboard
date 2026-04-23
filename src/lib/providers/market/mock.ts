@@ -24,6 +24,12 @@ export class MockMarketDataProvider implements MarketDataProvider {
         frequency: "weekly",
         points: [...marketFixtures.WTI]
       },
+      BRENT: {
+        name: "Brent Crude Oil (mock)",
+        unit: "USD per barrel",
+        frequency: "weekly",
+        points: [...marketFixtures.BRENT]
+      },
       BTC: {
         name: "Bitcoin (mock)",
         unit: "USD",

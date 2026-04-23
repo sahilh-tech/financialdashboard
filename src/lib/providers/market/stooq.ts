@@ -9,6 +9,7 @@ const STOOQ_SYMBOLS: Record<MarketSeriesKey, { symbol: string; name: string; uni
   SPX: { symbol: "^spx", name: "S&P 500", unit: "Index points" },
   DXY: { symbol: "dx.f", name: "US Dollar Index", unit: "Index points" },
   WTI: { symbol: "cl.f", name: "WTI Crude Oil", unit: "USD per barrel" },
+  BRENT: { symbol: "brn.f", name: "Brent Crude Oil", unit: "USD per barrel" },
   BTC: { symbol: "btcusd", name: "Bitcoin", unit: "USD" }
 };
 

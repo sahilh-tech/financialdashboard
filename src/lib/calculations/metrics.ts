@@ -12,6 +12,7 @@ export type CoreWeeklySeries = {
   SPX: TimeSeriesPoint[];
   DXY: TimeSeriesPoint[];
   WTI: TimeSeriesPoint[];
+  BRENT: TimeSeriesPoint[];
   BTC: TimeSeriesPoint[];
 };
 
@@ -62,11 +63,56 @@ function divideSeries(numerator: TimeSeriesPoint[], denominator: TimeSeriesPoint
     .filter((point): point is TimeSeriesPoint => point !== null);
 }
 
+function alignOptionalSeriesToAnchors(points: TimeSeriesPoint[], anchors: TimeSeriesPoint[], maxStalenessDays = 45): TimeSeriesPoint[] {
+  if (points.length === 0 || anchors.length === 0) {
+    return [];
+  }
+
+  let cursor = 0;
+  return anchors
+    .map((anchor) => {
+      while (cursor + 1 < points.length && points[cursor + 1].date <= anchor.date) {
+        cursor += 1;
+      }
+
+      const point = points[cursor];
+      if (!point || point.date > anchor.date) {
+        return null;
+      }
+
+      const anchorTime = new Date(`${anchor.date}T00:00:00.000Z`).getTime();
+      const pointTime = new Date(`${point.date}T00:00:00.000Z`).getTime();
+      const ageDays = (anchorTime - pointTime) / (24 * 60 * 60 * 1000);
+      if (ageDays > maxStalenessDays) {
+        return null;
+      }
+
+      return {
+        date: anchor.date,
+        value: point.value
+      };
+    })
+    .filter((point): point is TimeSeriesPoint => point !== null);
+}
+
 export function buildWeeklyAlignedSeries(input: CoreWeeklySeries): DashboardWeeklySeries {
-  const aligned = alignSeriesByAsOfWeeklyGrid(input, {
-    stepDays: 7,
-    maxStalenessDays: 45
-  });
+  const aligned = alignSeriesByAsOfWeeklyGrid(
+    {
+      WALCL: input.WALCL,
+      WTREGEN: input.WTREGEN,
+      RRPONTSYD: input.RRPONTSYD,
+      M2SL: input.M2SL,
+      FEDFUNDS: input.FEDFUNDS,
+      DGS2: input.DGS2,
+      SPX: input.SPX,
+      DXY: input.DXY,
+      WTI: input.WTI
+    },
+    {
+      stepDays: 7,
+      maxStalenessDays: 45
+    }
+  );
 
   const netLiquidity = aligned.WALCL.map((point, index) => ({
     date: point.date,
@@ -77,6 +123,9 @@ export function buildWeeklyAlignedSeries(input: CoreWeeklySeries): DashboardWeek
 
   return {
     ...aligned,
+    BRENT: alignOptionalSeriesToAnchors(input.BRENT, aligned.WTI),
+    DGS10: input.DGS10,
+    BTC: input.BTC,
     netLiquidity,
     liquidityVsSPX
   };
@@ -99,6 +148,7 @@ export function buildLatestMetrics(series: DashboardWeeklySeries): DashboardLate
     "SPX",
     "DXY",
     "WTI",
+    "BRENT",
     "BTC",
     "netLiquidity",
     "liquidityVsSPX"

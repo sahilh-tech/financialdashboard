@@ -1,6 +1,6 @@
 import { NamedSeries, SeriesMap } from "@/lib/types/timeSeries";
 
-export type MarketSeriesKey = "SPX" | "DXY" | "WTI" | "BTC";
+export type MarketSeriesKey = "SPX" | "DXY" | "WTI" | "BRENT" | "BTC";
 export type MarketSeriesMap = Pick<SeriesMap, MarketSeriesKey>;
 
 export interface MarketDataProvider {

@@ -10,6 +10,7 @@ const YAHOO_SYMBOLS: Record<MarketSeriesKey, { symbol: string; name: string; uni
   SPX: { symbol: "^GSPC", name: "S&P 500", unit: "Index points" },
   DXY: { symbol: "DX-Y.NYB", name: "US Dollar Index", unit: "Index points" },
   WTI: { symbol: "CL=F", name: "WTI Crude Oil", unit: "USD per barrel" },
+  BRENT: { symbol: "BZ=F", name: "Brent Crude Oil", unit: "USD per barrel" },
   BTC: { symbol: "BTC-USD", name: "Bitcoin", unit: "USD" }
 };
 
@@ -39,10 +40,10 @@ function toIsoDate(timestampSeconds: number): TimeSeriesPoint["date"] {
 
 async function fetchYahooSymbol(key: MarketSeriesKey): Promise<TimeSeriesPoint[]> {
   const symbol = YAHOO_SYMBOLS[key].symbol;
-  const cacheKey = `yahoo:${symbol}`;
+  const cacheKey = `yahoo:${symbol}:range:max`;
 
   return withCache(cacheKey, YAHOO_TTL_MS, async () => {
-    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=5y`;
+    const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encodeURIComponent(symbol)}?interval=1d&range=max`;
     const response = await fetch(url, {
       cache: "no-store",
       headers: { Accept: "application/json" }

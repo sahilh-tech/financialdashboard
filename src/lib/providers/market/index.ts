@@ -1,4 +1,5 @@
 import { logProviderError } from "@/lib/logging";
+import { fetchFredMarketSeries } from "@/lib/providers/fred";
 import { MockMarketDataProvider } from "./mock";
 import { StooqMarketDataProvider } from "./stooq";
 import { YahooMarketDataProvider } from "./yahoo";
@@ -35,7 +36,14 @@ export async function fetchMarketSeries(): Promise<{ provider: string; data: Mar
         logProviderError(`market:${provider.name}`, "Provider returned no usable market points.");
         continue;
       }
-      return { provider: provider.name, data };
+
+      const fredOverrides = await fetchFredMarketSeries();
+      const mergedData = {
+        ...data,
+        ...fredOverrides
+      };
+      const providerName = Object.keys(fredOverrides).length > 0 ? `${provider.name}+fred-market` : provider.name;
+      return { provider: providerName, data: mergedData };
     } catch (error) {
       logProviderError(`market:${provider.name}`, error);
     }

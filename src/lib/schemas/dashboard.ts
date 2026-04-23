@@ -42,6 +42,7 @@ export const dashboardResponseSchema = z.object({
     SPX: namedPointSeriesSchema,
     DXY: namedPointSeriesSchema,
     WTI: namedPointSeriesSchema,
+    BRENT: namedPointSeriesSchema,
     BTC: namedPointSeriesSchema,
     netLiquidity: namedPointSeriesSchema,
     liquidityVsSPX: namedPointSeriesSchema

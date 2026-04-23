@@ -9,6 +9,7 @@ type FredSeriesConfig = {
   label: string;
   unit: string;
   frequency: "daily" | "weekly" | "monthly";
+  valueMultiplier?: number;
 };
 
 export const FRED_SERIES: readonly FredSeriesConfig[] = [
@@ -30,8 +31,10 @@ export const FRED_SERIES: readonly FredSeriesConfig[] = [
     key: "RRPONTSYD",
     fredId: "RRPONTSYD",
     label: "Overnight Reverse Repo (RRPONTSYD)",
+    // FRED publishes RRPONTSYD in billions. Normalize to millions so it is comparable with WALCL and WTREGEN.
     unit: "Millions of USD",
-    frequency: "daily"
+    frequency: "daily",
+    valueMultiplier: 1_000
   },
   {
     key: "M2SL",
@@ -64,7 +67,7 @@ export const FRED_SERIES: readonly FredSeriesConfig[] = [
 ] as const;
 
 type MarketSeriesConfig = {
-  key: Extract<SeriesKey, "SPX" | "DXY" | "WTI" | "BTC">;
+  key: Extract<SeriesKey, "SPX" | "DXY" | "WTI" | "BRENT" | "BTC">;
   symbol: string;
   label: string;
   unit: string;
@@ -74,5 +77,6 @@ export const MARKET_SERIES: readonly MarketSeriesConfig[] = [
   { key: "SPX", symbol: "^SPX", label: "S&P 500", unit: "Index points" },
   { key: "DXY", symbol: "DXY", label: "US Dollar Index", unit: "Index points" },
   { key: "WTI", symbol: "CL=F", label: "WTI Crude Oil", unit: "USD per barrel" },
+  { key: "BRENT", symbol: "BZ=F", label: "Brent Crude Oil", unit: "USD per barrel" },
   { key: "BTC", symbol: "BTC-USD", label: "Bitcoin", unit: "USD" }
 ] as const;

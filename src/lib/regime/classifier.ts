@@ -27,7 +27,7 @@ export const DEFAULT_THRESHOLDS: RegimeThresholds = {
   dxyInflationRiskRoc4w: 1.5,
   spxMomentumRoc4w: 2,
   liquidityVsSpxWeakeningRoc4w: -1.25,
-  rrpNearZero: 100_000 // RRPONTSYD is in millions USD on FRED.
+  rrpNearZero: 100_000 // RRPONTSYD is normalized to millions USD before classification.
 };
 
 function isNumber(value: number | null | undefined): value is number {
@@ -40,7 +40,14 @@ export function classifyRegime(
 ): RegimeClassification {
   const netLiqRoc13 = metrics.roc13w.netLiquidity;
   const m2Roc13 = metrics.roc13w.M2SL;
-  const oilRoc4 = metrics.changes4w.WTI.percent;
+  const wtiRoc4 = metrics.changes4w.WTI.percent;
+  const brentRoc4 = metrics.changes4w.BRENT?.percent;
+  const oilRoc4 =
+    isNumber(wtiRoc4) && isNumber(brentRoc4)
+      ? Math.max(wtiRoc4, brentRoc4)
+      : isNumber(wtiRoc4)
+        ? wtiRoc4
+        : brentRoc4;
   const dxyRoc4 = metrics.changes4w.DXY.percent;
   const spxRoc4 = metrics.changes4w.SPX.percent;
   const liqVsSpxRoc4 = metrics.changes4w.liquidityVsSPX.percent;

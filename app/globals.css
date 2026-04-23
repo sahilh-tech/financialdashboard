@@ -24,3 +24,23 @@ body {
 * {
   border-color: rgba(111, 151, 179, 0.2);
 }
+
+@keyframes dashboard-skeleton {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+.dashboard-skeleton {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(7, 223, 193, 0.12) 45%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: dashboard-skeleton 1.4s ease-in-out infinite;
+}

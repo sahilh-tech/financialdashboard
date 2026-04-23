@@ -23,6 +23,7 @@ export type SeriesKey =
   | "SPX"
   | "DXY"
   | "WTI"
+  | "BRENT"
   | "BTC";
 
 export type SeriesMap = Record<SeriesKey, NamedSeries>;

@@ -46,11 +46,18 @@ export async function buildDashboardData(
     SPX: market?.data.SPX.points ?? [],
     DXY: market?.data.DXY.points ?? [],
     WTI: market?.data.WTI.points ?? [],
+    BRENT: market?.data.BRENT.points ?? [],
     BTC: market?.data.BTC.points ?? []
   };
 
-  const canComputeRegime = Object.values(coreSeries).every((seriesPoints) => seriesPoints.length > 0);
+  const requiredSeriesKeys = ["WALCL", "WTREGEN", "RRPONTSYD", "M2SL", "FEDFUNDS", "DGS2", "SPX", "DXY", "WTI"] as const;
+  const missingRequiredSeries = requiredSeriesKeys.filter((key) => coreSeries[key].length === 0);
+  const canComputeRegime = missingRequiredSeries.length === 0;
   const hasAnyData = Object.values(coreSeries).some((seriesPoints) => seriesPoints.length > 0);
+
+  if (missingRequiredSeries.length > 0) {
+    warnings.push(`Missing required series: ${missingRequiredSeries.join(", ")}.`);
+  }
 
   let series: DashboardDataResponse["series"] = {
     ...coreSeries,
@@ -86,6 +93,7 @@ export async function buildDashboardData(
       SPX: filterByDateRange(fullAligned.SPX),
       DXY: filterByDateRange(fullAligned.DXY),
       WTI: filterByDateRange(fullAligned.WTI),
+      BRENT: filterByDateRange(fullAligned.BRENT),
       BTC: filterByDateRange(fullAligned.BTC),
       netLiquidity: filterByDateRange(fullAligned.netLiquidity),
       liquidityVsSPX: filterByDateRange(fullAligned.liquidityVsSPX)
@@ -102,6 +110,7 @@ export async function buildDashboardData(
         describeChange("M2", metrics.changes4w.M2SL.percent),
         describeChange("SPX", metrics.changes4w.SPX.percent),
         describeChange("WTI", metrics.changes4w.WTI.percent),
+        describeChange("Brent", metrics.changes4w.BRENT.percent),
         describeChange("DXY", metrics.changes4w.DXY.percent)
       ].filter((line): line is string => line !== null);
 
